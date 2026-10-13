@@ -3,192 +3,212 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>malave.com - Family Gallery</title>
+  <meta name="description" content="The Malave family photo album, stories, and journal.">
+  <title>The Malave Family</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#gallery">Skip to photos</a>
 
-  <!-- ================== HERO / INTRO ================== -->
-  <header class="hero">
-    <div class="hero-content">
-      <h1>malave.com</h1>
-      <p class="subtitle">Family pictures & memories</p>
-      <nav class="page-nav">
-        <a href="#gallery" class="nav-link active">Gallery</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#contact" class="nav-link">Contact</a>
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span class="brand-text">The Malave Family</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
+        <a href="#story">Our Story</a>
+        <a href="#gallery">Photo Album</a>
+        <a href="#journal">Journal</a>
+        <a href="#contact">Contact</a>
       </nav>
     </div>
   </header>
 
-  <!-- ================== GALLERY (main focus) ================== -->
-  <section id="gallery" class="gallery">
-    <div class="section-header">
-      <h2>Our Gallery</h2>
-      <p>Family pictures through the years</p>
-    </div>
-    <div class="gallery-grid">
-      <!-- Row 1 -->
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00627.gif" alt="DSC00627" loading="lazy">
-        <div class="card-caption">DSC00627</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00619.gif" alt="DSC00619" loading="lazy">
-        <div class="card-caption">DSC00619</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00593.gif" alt="DSC00593" loading="lazy">
-        <div class="card-caption">DSC00593</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00485.gif" alt="DSC00485" loading="lazy">
-        <div class="card-caption">DSC00485</div>
-      </div>
-      <!-- Row 2 -->
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00483.gif" alt="DSC00483" loading="lazy">
-        <div class="card-caption">DSC00483</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00513.gif" alt="DSC00513" loading="lazy">
-        <div class="card-caption">DSC00513</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00524.gif" alt="DSC00524" loading="lazy">
-        <div class="card-caption">DSC00524</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00519.gif" alt="DSC00519" loading="lazy">
-        <div class="card-caption">DSC00519</div>
-      </div>
-      <!-- Row 3 -->
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00692.gif" alt="DSC00692" loading="lazy">
-        <div class="card-caption">DSC00692</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00691.gif" alt="DSC00691" loading="lazy">
-        <div class="card-caption">DSC00691</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00077.gif" alt="DSC00077" loading="lazy">
-        <div class="card-caption">DSC00077</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00007.gif" alt="DSC00007" loading="lazy">
-        <div class="card-caption">DSC00007</div>
-      </div>
-      <!-- Row 4 -->
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00591.gif" alt="DSC00591" loading="lazy">
-        <div class="card-caption">DSC00591</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00807.gif" alt="DSC00807" loading="lazy">
-        <div class="card-caption">DSC00807</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00789.gif" alt="DSC00789" loading="lazy">
-        <div class="card-caption">DSC00789</div>
-      </div>
-      <div class="gallery-card">
-        <img src="images/thumbnails/DSC00797.gif" alt="DSC00797" loading="lazy">
-        <div class="card-caption">DSC00797</div>
-      </div>
-      <!-- Featured large image -->
-      <div class="gallery-card featured">
-        <img src="images/ellio_and_daddy_in_the_cornfield.jpg" alt="Ellio and dad in the cornfield" loading="lazy">
-        <div class="card-caption">Ellio and dad in the cornfield</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================== ABOUT ================== -->
-  <section id="about" class="about">
-    <div class="section-header">
-      <h2>About Us</h2>
-      <p>A little about our family</p>
-    </div>
-    <div class="about-content">
-      <div class="about-text">
-        <p>Welcome to our family website! Here you'll find pictures, memories, and moments captured through the years. We're a family who loves documenting life's special moments - from everyday adventures to special occasions.</p>
-        <p>Feel free to explore the gallery, share your favorite photos, or get in touch.</p>
-      </div>
-      <div class="about-image">
-        <img src="images/ellio_and_daddy_in_the_cornfield.jpg" alt="About image - Ellio and dad" width="300" height="200">
-      </div>
-    </div>
-  </section>
-
-  <!-- ================== BLOG ================== -->
-  <section id="blog" class="blog">
-    <div class="section-header">
-      <h2>Blog</h2>
-      <p>Family stories & updates</p>
-    </div>
-    <div class="blog-grid">
-      <!-- Blog post 1 -->
-      <article class="blog-card">
-        <img src="images/ellio_and_daddy_in_the_cornfield.jpg" alt="First family outing" class="blog-card-img">
-        <div class="blog-card-content">
-          <span class="blog-card-meta">March 15, 2026</span>
-          <h3 class="blog-card-title">Our First Family Outing</h3>
-          <p class="blog-card-excerpt">Ellio's first trip to the cornfield was a beautiful experience. The golden light and fresh air made for perfect family memories.</p>
-          <a href="#" class="blog-card-read-more">Read more →</a>
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">A family archive</p>
+          <h1>Moments we<br>keep close.</h1>
+          <p class="lead">
+            Photographs, small stories, and the everyday in-between.
+            A quiet corner of the web for the people we love.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#gallery">View the album</a>
+            <a class="btn btn-ghost" href="#story">Read our story</a>
+          </div>
         </div>
-      </article>
-      <!-- Blog post 2 -->
-      <article class="blog-card">
-        <img src="images/ellio_and_daddy_in_the_cornfield.jpg" alt="Family cooking together" class="blog-card-img">
-        <div class="blog-card-content">
-          <span class="blog-card-meta">February 28, 2026</span>
-          <h3 class="blog-card-title">Cooking Tradition</h3>
-          <p class="blog-card-excerpt">Passing down family recipes through generations. Ellio helps stir the sauce just like his grandfather taught us.</p>
-          <a href="#" class="blog-card-read-more">Read more →</a>
-        </div>
-      </article>
-      <!-- Blog post 3 -->
-      <article class="blog-card">
-        <img src="images/ellio_and_daddy_in_the_cornfield.jpg" alt="Weekend gardening" class="blog-card-img">
-        <div class="blog-card-content">
-          <span class="blog-card-meta">January 20, 2026</span>
-          <h3 class="blog-card-title">Gardening Together</h3>
-          <p class="blog-card-excerpt">Starting a small garden was our new year's resolution. Watching things grow together has been so rewarding.</p>
-          <a href="#" class="blog-card-read-more">Read more →</a>
-        </div>
-      </article>
-    </div>
-    <div class="blog-load-more">
-      <button>Load More Posts →</button>
-    </div>
-  </section>
 
-  <!-- ================== CONTACT ================== -->
-  <section id="contact" class="contact">
-    <div class="section-header">
-      <h2>Contact</h2>
-      <p>Get in touch with us</p>
-    </div>
-    <div class="contact-content">
-      <div class="contact-info">
-        <p>Email: <a href="mailto:ellis@malave.com">ellis@malave.com</a></p>
-        <p>Feel free to send us a message or share your favorite memories from the gallery!</p>
+        <figure class="hero-figure reveal">
+          <div class="print print-hero">
+            <img src="images/ellio-and-daddy-in-the-cornfield.jpg"
+                 alt="Ellio and dad standing together in a cornfield"
+                 width="400" height="300">
+          </div>
+          <figcaption>Ellio &amp; dad, the cornfield</figcaption>
+        </figure>
       </div>
-      <div class="contact-social">
-        <p>Share this page:</p>
-        <a href="#" class="social-link">Twitter</a>
-        <a href="#" class="social-link">Facebook</a>
-        <a href="#" class="social-link">Pinterest</a>
-      </div>
-    </div>
-  </section>
+      <div class="hero-grain" aria-hidden="true"></div>
+    </section>
 
-  <!-- ================== LIGHTBOX ================== -->
-  <div id="lightbox" class="lightbox" style="display:none;">
-    <span class="lightbox-close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img">
-    <div class="lightbox-caption" id="lightbox-caption"></div>
+    <!-- ============ STORY ============ -->
+    <section class="story section" id="story">
+      <div class="wrap story-inner">
+        <div class="section-head reveal">
+          <p class="eyebrow">Our story</p>
+          <h2>A little about us</h2>
+        </div>
+
+        <div class="story-grid">
+          <div class="story-lead reveal">
+            <p class="drop-cap">
+              Welcome to our family's corner of the internet. Here you'll find
+              the photographs we've collected over the years, the small stories
+              worth remembering, and the moments that quietly became tradition.
+            </p>
+          </div>
+
+          <div class="story-body reveal">
+            <p>
+              We're a family who loves documenting life as it happens - the
+              Sunday afternoons, the road trips, the first days of school, and
+              the ordinary evenings that somehow mean the most.
+            </p>
+            <p>
+              Look through the album, linger on the ones that catch your eye,
+              and reach out whenever you like. This archive grows a little
+              every season.
+            </p>
+
+            <ul class="stats" role="list">
+              <li><strong>20+</strong><span>Years of photos</span></li>
+              <li><strong>3</strong><span>Generations</span></li>
+              <li><strong>&infin;</strong><span>More to come</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section class="gallery section" id="gallery">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The album</p>
+          <h2>Photographs</h2>
+          <p class="section-sub">Tap any photo to view it larger.</p>
+        </div>
+
+        <div class="album" id="album">
+          <!-- Prints are generated by script.js so captions stay in one place -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ JOURNAL ============ -->
+    <section class="journal section" id="journal">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Journal</p>
+          <h2>Small stories</h2>
+          <p class="section-sub">Notes from the life we're living.</p>
+        </div>
+
+        <div class="journal-grid">
+          <article class="post reveal">
+            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
+              <img src="images/thumbnails/DSC00627.gif" alt="" width="80" height="60" loading="lazy">
+            </a>
+            <div class="post-body">
+              <p class="post-meta">Spring &middot; 2026</p>
+              <h3>Our first outing to the cornfield</h3>
+              <p>
+                Golden light, tall green rows, and a boy who couldn't stop
+                running. Some afternoons you know you'll remember forever.
+              </p>
+              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
+            </div>
+          </article>
+
+          <article class="post reveal">
+            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
+              <img src="images/thumbnails/DSC00593.gif" alt="" width="80" height="60" loading="lazy">
+            </a>
+            <div class="post-body">
+              <p class="post-meta">Winter &middot; 2026</p>
+              <h3>Cooking together, like always</h3>
+              <p>
+                The recipe came from my grandmother, then my mother, and now
+                it's being stirred by the smallest hands in the kitchen.
+              </p>
+              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
+            </div>
+          </article>
+
+          <article class="post reveal">
+            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
+              <img src="images/thumbnails/DSC00692.gif" alt="" width="80" height="60" loading="lazy">
+            </a>
+            <div class="post-body">
+              <p class="post-meta">Autumn &middot; 2025</p>
+              <h3>We planted a small garden</h3>
+              <p>
+                Tomatoes, beans, and a lot of hope. Watching things grow
+                beside the people you love is its own kind of magic.
+              </p>
+              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="contact section" id="contact">
+      <div class="wrap contact-inner">
+        <div class="reveal">
+          <p class="eyebrow eyebrow-light">Say hello</p>
+          <h2>Let's stay in touch</h2>
+          <p class="contact-sub">
+            Send a note, share a memory, or ask for a photo from the archive.
+          </p>
+        </div>
+        <a class="btn btn-light reveal" href="mailto:ellis@malave.com">ellis@malave.com</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p class="footer-brand">The Malave Family</p>
+      <p class="footer-note">&copy; <span id="year">2026</span> malave.com &middot; Made with care.</p>
+    </div>
+  </footer>
+
+  <!-- ============ LIGHTBOX ============ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+    <button class="lb-btn lb-close" aria-label="Close viewer">&times;</button>
+    <button class="lb-btn lb-prev" aria-label="Previous photo">&#8249;</button>
+    <button class="lb-btn lb-next" aria-label="Next photo">&#8250;</button>
+    <figure class="lb-figure">
+      <img class="lb-img" id="lb-img" alt="">
+      <figcaption class="lb-caption" id="lb-caption"></figcaption>
+    </figure>
   </div>
 
   <script src="script.js"></script>

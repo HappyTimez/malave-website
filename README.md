@@ -1,104 +1,86 @@
-# malave.com - Modern Family Gallery
+# malave.com - The Malave Family
 
-A modern, one-page family gallery website replacing the old table-based HTML design.
+A modern, one-page family website replacing the old table-based HTML design.
 
-## 🌐 Live Site
+## Live site
+
 **https://malave.com**
 
-## 📝 Overview
-This project is a complete redesign of the malave.com home website, transforming it from an outdated table-based HTML 4.01 site (with deprecated JavaScript menus from the early 2000s) into a fully responsive, mobile-first web application.
+## Overview
 
-## ✨ Features
+This project redesigns the malave.com family site. The original was an HTML 4.01
+Transitional page built with fixed-width tables and early-2000s JavaScript menus.
+It is now a single, responsive page with a warm, editorial "family archive"
+aesthetic: serif display type, framed photo prints, and a keyboard-accessible
+lightbox.
+
+## Features
 
 | Feature | Description |
-|---------|-------------|
-| **One-page layout** | All content on a single scrollable page |
-| **Responsive gallery** | CSS Grid adapts from 6 columns (desktop) to 1 column (mobile) |
-| **Image lightbox** | Click any thumbnail for fullscreen overlay view |
-| **Smooth navigation** | Anchor links scroll between sections |
-| **Modern styling** | Clean CSS with CSS variables, no deprecated HTML |
-| **UTF-8 charset** | Proper character encoding |
-| **Lazy-loaded images** | `loading="lazy"` for better performance |
-| **Accessible** | Semantic HTML5, alt text, keyboard-friendly |
+| --- | --- |
+| **Single continuous page** | Hero, Story, Photo Album, Journal, Contact - all on one scroll |
+| **Family archive look** | Paper tones, serif display type, framed "print" photographs |
+| **Responsive album** | CSS Grid contact sheet that reflows to two columns on phones |
+| **Lightbox** | Click or press Enter on any print; arrow keys and `Esc` supported |
+| **Scroll reveal** | Sections fade in via `IntersectionObserver` |
+| **Accessible** | Semantic HTML5, skip link, focus states, `prefers-reduced-motion` |
+| **No dependencies** | Hand-written HTML, CSS, and vanilla JavaScript |
 
-## 📁 Project Structure
+## Project structure
 
 ```
-/modern-redesign/
-├── index.html        ← Main HTML page (hero + gallery + about + contact)
-├── styles.css        ← Responsive CSS (Flexbox, Grid, lightbox styles)
-└── script.js         ← Lightbox + smooth scroll functionality
+modern-redesign/
+├── index.html                 Main page: hero, story, album, journal, contact
+├── styles.css                 Design tokens, layout, gallery, lightbox
+├── script.js                  Album generation, lightbox, nav, reveal
+├── images/
+│   ├── ellio-and-daddy-in-the-cornfield.jpg   Featured photo (400x300)
+│   ├── fallback.svg                            Placeholder graphic
+│   └── thumbnails/DSC*.gif                     16 archival thumbnails (80x60)
+├── .github/workflows/deploy.yml   Auto-deploy on push to master
+└── README.md
 ```
 
-## 🖼️ Gallery
+## Photo archive
 
-The gallery features **16 thumbnails** from the original site plus **1 featured large image** (Ellio and dad in the cornfield). All images are sourced from the original `images/` directory.
+The album contains **16 thumbnails** plus **1 featured photo**. The originals were
+only ever stored as small thumbnails (80x60 px), so the design presents them as a
+contact sheet of physical prints rather than enlarging them. The wide featured
+photo is capped at 34rem to limit upscaling.
 
-**Thumbnail categories include:**
-- DSC00627 through DSC00797 (original family photos)
-- Featured large image: `ellio_and_daddy_in_the_cornfield.jpg`
+## Local development
 
-## 🎵 Music Section
-Inline music reference to "Andromeda" track (links to original `andromeda.php`). No separate music page - integrated into the one-page design.
+Open `index.html` directly in a browser, or serve the folder:
 
-## 📱 Responsive Breakpoints
-
-| Screen Width | Gallery Columns |
-|-------------|-----------------|
-| 320px - 479px | 1 column |
-| 480px - 767px | 2 columns |
-| 768px - 1023px | 3 columns |
-| 1024px - 1399px | 4 columns |
-| 1400px+ | 6 columns |
-
-## 🚀 Local Development
-
-1. **Start OpenCode web interface:**
-   ```bash
-   cd /home/happytimez/.opencode
-   opencode serve --port 8080
-   ```
-   Then open http://127.0.0.1:8080 in your browser.
-
-2. **Or open index.html directly:**
-   ```bash
-   open /home/happytimez/modern-redesign/index.html
-   ```
-
-3. **Test responsiveness** by resizing the browser window.
-
-## 🛠️ Built With
-
-- **HTML5** - Semantic markup
-- **CSS3** - CSS Grid, Flexbox, CSS Variables
-- **Vanilla JavaScript** - Lightbox interaction, smooth scroll
-- **Responsive Design** - Mobile-first approach
-- **No frameworks** - Lightweight, fast loading
-
-## 📦 Deployment
-
-### Option 1: GitHub Actions (Auto-Deploy)
-See the `.github/workflows/deploy.yml` file in this repository for automatic deployment.
-
-### Option 2: Manual SFTP
 ```bash
-sftp ellis@malave.com
-cd public_html
-put -r modern-redesign/* .
-exit
+cd modern-redesign && python3 -m http.server 8000
 ```
 
-### Option 3: GitHub Pages
-- Set up GitHub Pages to serve from the `main` branch or `/(root)` folder
-- Note: This would show the source files, not the deployed site
+Then visit http://localhost:8000.
 
-## 👥 Contact
-- **Email:** ellis@malave.com
-- **Website:** https://malave.com
+## Deployment
 
-## 📄 License
-Personal family website - all content original unless otherwise noted.
+Pushing to `master` triggers `.github/workflows/deploy.yml`, which deploys over
+SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the
+`FTP_SSH_KEY` repository secret.
+
+> **Note:** the workflow uses `rsync --delete`. Everything served by the site must
+> live in this repository, and dotfiles are excluded from the sync.
+
+To deploy manually:
+
+```bash
+rsync -avz --delete \
+  --exclude '.git' --exclude '.github' --exclude 'README.md' \
+  -e "ssh -p 21098" \
+  ./ malamkte@209.74.67.64:/home/malamkte/public_html/
+```
+
+## Contact
+
+- Email: ellis@malave.com
+- Website: https://malave.com
 
 ---
 
-**Last updated:** 2026
+Personal family website - all photos and text belong to the Malave family.
