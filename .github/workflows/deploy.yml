@@ -17,17 +17,11 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.FTP_SSH_KEY }}
-          
-      - name: Add Server to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p 21098 -H 209.74.67.64 >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH rsync
         run: |
           rsync -avz --delete \
-            -e "ssh -p 21098" \
-            ./ malamkte@209.74.67.64:/home/malamkte/public_html/
-
+            -e "ssh -o StrictHostKeyChecking=no" \
+            ./ modern-redesign/ ellis@malave.com:/var/www/html/
       - name: Confirm deployment
         run: echo "✅ Deployment complete to malave.com"
