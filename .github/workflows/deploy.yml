@@ -3,8 +3,7 @@ name: Deploy malave.com
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -18,7 +17,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.FTP_SSH_KEY }}
 
-      - name: Add Server to known_hosts
+      - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -p 21098 -H 209.74.67.64 >> ~/.ssh/known_hosts
@@ -26,7 +25,11 @@ jobs:
       - name: Deploy via SSH rsync
         run: |
           rsync -avz --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'README.md' \
             -e "ssh -p 21098" \
             ./ malamkte@209.74.67.64:/home/malamkte/public_html/
+
       - name: Confirm deployment
-        run: echo "✅ Deployment complete to malave.com"
+        run: echo "Deployed to malave.com"
