@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Image unavailable</title>
+  <desc id="desc">Fallback placeholder when a gallery image is missing.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eaf2f8"/>
+      <stop offset="100%" stop-color="#dfeaf5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect x="80" y="80" width="1040" height="640" rx="24" fill="#ffffff" opacity="0.7" stroke="#9bb6c7" stroke-width="3"/>
+  <circle cx="600" cy="300" r="120" fill="#dfeaf5" stroke="#7b9bb3" stroke-width="4"/>
+  <path d="M525 345L570 400L620 345L675 400L720 345V440H525V345Z" fill="#7b9bb3" opacity="0.8"/>
+  <path d="M520 445H680" stroke="#7b9bb3" stroke-width="8" stroke-linecap="round"/>
+  <path d="M570 445V500" stroke="#7b9bb3" stroke-width="8" stroke-linecap="round"/>
+  <path d="M630 445V500" stroke="#7b9bb3" stroke-width="8" stroke-linecap="round"/>
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#2f4156">Image unavailable</text>
+</svg>
