@@ -1,199 +1,73 @@
 /* =========================================================
-   The Malave Family — interactions
-   Vanilla JS, no dependencies.
+   Malave Family Photos - lightbox (progressive enhancement)
+
+   Every photo is a normal link, so it works with JavaScript
+   disabled. When JS is available, this intercepts the click
+   and shows the photo in an overlay instead.
    ========================================================= */
 
 (function () {
   "use strict";
 
-  /* ---------- Photo album data (single source of truth) ---------- */
-  // Captions are a work in progress; they currently use the original
-  // archive filenames so nothing is mislabelled.
-  const PHOTOS = [
-    { src: "images/ellio-and-daddy-in-the-cornfield.jpg", caption: "Ellio & dad, the cornfield", wide: true },
-    { src: "images/thumbnails/DSC00007.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00077.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00483.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00485.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00513.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00519.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00524.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00591.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00593.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00619.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00627.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00691.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00692.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00789.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00797.gif", caption: "Archive photo" },
-    { src: "images/thumbnails/DSC00807.gif", caption: "Archive photo" }
-  ];
+  var links = Array.prototype.slice.call(document.querySelectorAll("a[data-lb]"));
+  var lb = document.getElementById("lightbox");
+  if (!links.length || !lb) return;
 
-  const $ = (sel, ctx = document) => ctx.querySelector(sel);
-  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
-  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var lbImg = document.getElementById("lb-img");
+  var lbCap = document.getElementById("lb-cap");
+  var btnClose = lb.querySelector(".lb-close");
+  var btnPrev = lb.querySelector(".lb-prev");
+  var btnNext = lb.querySelector(".lb-next");
+  var current = 0;
+  var lastFocused = null;
 
-  /* ---------- Build the album ---------- */
-  function buildAlbum() {
-    const album = $("#album");
-    if (!album) return;
-
-    const frag = document.createDocumentFragment();
-    PHOTOS.forEach((photo, index) => {
-      const card = document.createElement("figure");
-      card.className = "print-card" + (photo.wide ? " is-wide" : "");
-      card.setAttribute("role", "button");
-      card.setAttribute("tabindex", "0");
-      card.dataset.index = String(index);
-      card.setAttribute("aria-label", `View photo: ${photo.caption}`);
-
-      const img = document.createElement("img");
-      img.src = photo.src;
-      img.alt = photo.caption;
-      img.loading = "lazy";
-      img.decoding = "async";
-
-      const cap = document.createElement("figcaption");
-      cap.textContent = photo.caption;
-
-      card.append(img, cap);
-      frag.append(card);
-    });
-    album.append(frag);
+  function render(index) {
+    current = (index + links.length) % links.length;
+    var link = links[current];
+    var img = link.querySelector("img");
+    lbImg.src = link.getAttribute("href");
+    lbImg.alt = (img && img.alt) || "";
+    lbCap.textContent = link.getAttribute("data-album") || "";
   }
 
-  /* ---------- Lightbox ---------- */
-  function initLightbox() {
-    const lb = $("#lightbox");
-    const lbImg = $("#lb-img");
-    const lbCap = $("#lb-caption");
-    if (!lb || !lbImg) return;
-
-    let current = 0;
-    let lastFocused = null;
-
-    function render(index) {
-      current = (index + PHOTOS.length) % PHOTOS.length;
-      const photo = PHOTOS[current];
-      lbImg.src = photo.src;
-      lbImg.alt = photo.caption;
-      lbCap.textContent = photo.caption;
-    }
-
-    function open(index) {
-      lastFocused = document.activeElement;
-      render(index);
-      lb.hidden = false;
-      // allow the transition to run
-      requestAnimationFrame(() => lb.classList.add("is-open"));
-      document.body.style.overflow = "hidden";
-      $(".lb-close").focus();
-    }
-
-    function close() {
-      lb.classList.remove("is-open");
-      document.body.style.overflow = "";
-      const done = () => { lb.hidden = true; lb.removeEventListener("transitionend", done); };
-      lb.addEventListener("transitionend", done);
-      if (lastFocused) lastFocused.focus();
-    }
-
-    // Wire up album interactions
-    const album = $("#album");
-    album.addEventListener("click", (e) => {
-      const card = e.target.closest(".print-card");
-      if (card) open(Number(card.dataset.index));
-    });
-    album.addEventListener("keydown", (e) => {
-      const card = e.target.closest(".print-card");
-      if (card && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        open(Number(card.dataset.index));
-      }
-    });
-
-    $(".lb-close").addEventListener("click", close);
-    $(".lb-prev").addEventListener("click", () => render(current - 1));
-    $(".lb-next").addEventListener("click", () => render(current + 1));
-
-    // Click the backdrop to close
-    lb.addEventListener("click", (e) => {
-      if (e.target === lb) close();
-    });
-
-    // Keyboard controls
-    document.addEventListener("keydown", (e) => {
-      if (lb.hidden) return;
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowLeft") render(current - 1);
-      else if (e.key === "ArrowRight") render(current + 1);
-    });
+  function open(index) {
+    lastFocused = document.activeElement;
+    render(index);
+    lb.hidden = false;
+    document.body.style.overflow = "hidden";
+    btnClose.focus();
   }
 
-  /* ---------- Mobile navigation ---------- */
-  function initNav() {
-    const toggle = $(".nav-toggle");
-    const nav = $("#site-nav");
-    if (!toggle || !nav) return;
+  function close() {
+    lb.hidden = true;
+    document.body.style.overflow = "";
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
 
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  links.forEach(function (link, index) {
+    link.addEventListener("click", function (e) {
+      // Let modified clicks (new tab, download, etc.) behave normally.
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      open(index);
     });
-
-    nav.addEventListener("click", (e) => {
-      if (e.target.tagName === "A") {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-      }
-    });
-  }
-
-  /* ---------- Sticky header state ---------- */
-  function initHeader() {
-    const header = $(".site-header");
-    if (!header) return;
-    const onScroll = () => header.classList.toggle("is-stuck", window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-  }
-
-  /* ---------- Reveal on scroll ---------- */
-  function initReveal() {
-    const items = $$(".reveal");
-    if (!items.length) return;
-
-    if (prefersReduced || !("IntersectionObserver" in window)) {
-      items.forEach((el) => el.classList.add("is-visible"));
-      return;
-    }
-
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          io.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
-
-    items.forEach((el) => io.observe(el));
-  }
-
-  /* ---------- Footer year ---------- */
-  function initYear() {
-    const el = $("#year");
-    if (el) el.textContent = String(new Date().getFullYear());
-  }
-
-  /* ---------- Boot ---------- */
-  document.addEventListener("DOMContentLoaded", () => {
-    buildAlbum();
-    initLightbox();
-    initNav();
-    initHeader();
-    initReveal();
-    initYear();
   });
+
+  btnClose.addEventListener("click", close);
+  btnPrev.addEventListener("click", function () { render(current - 1); });
+  btnNext.addEventListener("click", function () { render(current + 1); });
+
+  lb.addEventListener("click", function (e) {
+    if (e.target === lb) close();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (lb.hidden) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") render(current - 1);
+    else if (e.key === "ArrowRight") render(current + 1);
+  });
+
+  var year = document.getElementById("year");
+  if (year) year.textContent = String(new Date().getFullYear());
 })();

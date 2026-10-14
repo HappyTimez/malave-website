@@ -3,211 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Malave family photo album, stories, and journal.">
-  <title>The Malave Family</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <meta name="description" content="The Malave family photo album - 53 photographs from 2003 and 2004.">
+  <title>Malave Family Photos</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <a class="skip-link" href="#gallery">Skip to photos</a>
-
-  <!-- ============ HEADER ============ -->
-  <header class="site-header" id="top">
-    <div class="wrap header-inner">
-      <a class="brand" href="#top">
-        <span class="brand-mark" aria-hidden="true">M</span>
-        <span class="brand-text">The Malave Family</span>
-      </a>
-
-      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav class="site-nav" id="site-nav" aria-label="Primary">
-        <a href="#story">Our Story</a>
-        <a href="#gallery">Photo Album</a>
-        <a href="#journal">Journal</a>
-        <a href="#contact">Contact</a>
+<body id="top">
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href="#top">Malave Family</a>
+      <nav class="nav" aria-label="Albums">
+        <a href="#favorites">Favorites</a>
+        <a href="#fishing">2003</a>
+        <a href="#newyear">2004</a>
+        <a href="#about">About</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- ============ HERO ============ -->
-    <section class="hero">
-      <div class="wrap hero-inner">
-        <div class="hero-copy reveal">
-          <p class="eyebrow">A family archive</p>
-          <h1>Moments we<br>keep close.</h1>
-          <p class="lead">
-            Photographs, small stories, and the everyday in-between.
-            A quiet corner of the web for the people we love.
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#gallery">View the album</a>
-            <a class="btn btn-ghost" href="#story">Read our story</a>
-          </div>
-        </div>
-
-        <figure class="hero-figure reveal">
-          <div class="print print-hero">
-            <img src="images/ellio-and-daddy-in-the-cornfield.jpg"
-                 alt="Ellio and dad standing together in a cornfield"
-                 width="400" height="300">
-          </div>
-          <figcaption>Ellio &amp; dad, the cornfield</figcaption>
-        </figure>
+    <section class="hero wrap">
+      <div class="hero-head">
+        <h1>Our family photographs</h1>
+        <p>Snapshots from the years we have shared - the big days and the ordinary ones.</p>
       </div>
-      <div class="hero-grain" aria-hidden="true"></div>
+      <figure class="feature">
+        <a href="images/ellio-and-daddy-in-the-cornfield.jpg" data-lb data-album="Featured">
+          <img src="images/ellio-and-daddy-in-the-cornfield.jpg" width="400" height="300"
+               alt="Ellio and dad standing together in a cornfield">
+        </a>
+        <figcaption>Ellio and dad in the cornfield</figcaption>
+      </figure>
     </section>
 
-    <!-- ============ STORY ============ -->
-    <section class="story section" id="story">
-      <div class="wrap story-inner">
-        <div class="section-head reveal">
-          <p class="eyebrow">Our story</p>
-          <h2>A little about us</h2>
+      <section class="album wrap" id="favorites">
+        <div class="album-head">
+          <h2>Family Favorites</h2>
+          <p class="album-meta">Portraits and candid moments &middot; 11 photos</p>
         </div>
-
-        <div class="story-grid">
-          <div class="story-lead reveal">
-            <p class="drop-cap">
-              Welcome to our family's corner of the internet. Here you'll find
-              the photographs we've collected over the years, the small stories
-              worth remembering, and the moments that quietly became tradition.
-            </p>
-          </div>
-
-          <div class="story-body reveal">
-            <p>
-              We're a family who loves documenting life as it happens - the
-              Sunday afternoons, the road trips, the first days of school, and
-              the ordinary evenings that somehow mean the most.
-            </p>
-            <p>
-              Look through the album, linger on the ones that catch your eye,
-              and reach out whenever you like. This archive grows a little
-              every season.
-            </p>
-
-            <ul class="stats" role="list">
-              <li><strong>20+</strong><span>Years of photos</span></li>
-              <li><strong>3</strong><span>Generations</span></li>
-              <li><strong>&infin;</strong><span>More to come</span></li>
-            </ul>
-          </div>
+        <div class="grid">
+        <a class="tile" href="images/gallery/DSC00482.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00482.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00483.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00483.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00485.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00485.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00487.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00487.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00513.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00513.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00519.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00519.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00524.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00524.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00619.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00619.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00646.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00646.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00676.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00676.jpg" width="400" height="300" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/gallery/DSC00692.jpg" data-lb data-album="Family Favorites"><img src="images/gallery/DSC00692.jpg" width="400" height="266" loading="lazy" decoding="async" alt=""></a>
         </div>
-      </div>
+      </section>
+
+      <section class="album wrap" id="fishing">
+        <div class="album-head">
+          <h2>Fishing Trip, Summer 2003</h2>
+          <p class="album-meta">Days on the water &middot; 20 photos</p>
+        </div>
+        <div class="grid">
+        <a class="tile" href="images/albums/fishing2003/IMG_05070007.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05070007.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05080008.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05080008.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05090009_001.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05090009_001.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05110011.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05110011.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05130013.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05130013.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05140014.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05140014.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05150015.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05150015.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05190019.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05190019.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05200020.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05200020.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05220022.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05220022.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05260026.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05260026.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05270027.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05270027.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05290029.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05290029.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05300030.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05300030.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05310031.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05310031.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05320032.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05320032.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05520050.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05520050.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05540052.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05540052.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05580056.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05580056.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/fishing2003/IMG_05620060.jpg" data-lb data-album="Fishing Trip, Summer 2003"><img src="images/albums/fishing2003/IMG_05620060.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        </div>
+      </section>
+
+      <section class="album wrap" id="newyear">
+        <div class="album-head">
+          <h2>New Year 2004</h2>
+          <p class="album-meta">Celebrations &middot; 16 photos</p>
+        </div>
+        <div class="grid">
+        <a class="tile" href="images/albums/NewYear2004/106065182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/106065182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/126065182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/126065182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/216065182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/216065182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/278565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/278565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/338565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/338565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/358565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/358565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/368565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/368565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/628565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/628565182103_0_ALB.jpg" width="336" height="448" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/658565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/658565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/678565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/678565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/706065182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/706065182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/838565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/838565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/878565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/878565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/948565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/948565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/968565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/968565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/NewYear2004/988565182103_0_ALB.jpg" data-lb data-album="New Year 2004"><img src="images/albums/NewYear2004/988565182103_0_ALB.jpg" width="448" height="336" loading="lazy" decoding="async" alt=""></a>
+        </div>
+      </section>
+
+      <section class="album wrap" id="autumn">
+        <div class="album-head">
+          <h2>August &amp; September 2003</h2>
+          <p class="album-meta">Late summer and early fall &middot; 6 photos</p>
+        </div>
+        <div class="grid">
+        <a class="tile" href="images/albums/August-2003/DSC018220021.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/August-2003/DSC018220021.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/September-2003/DSC018870084.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/September-2003/DSC018870084.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/September-2003/DSC018900086.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/September-2003/DSC018900086.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/September-2003/DSC018920088.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/September-2003/DSC018920088.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/September-2003/DSC018940090.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/September-2003/DSC018940090.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        <a class="tile" href="images/albums/September-2003/DSC018950091.jpg" data-lb data-album="August &amp; September 2003"><img src="images/albums/September-2003/DSC018950091.jpg" width="640" height="480" loading="lazy" decoding="async" alt=""></a>
+        </div>
+      </section>
+
+    <section class="about wrap" id="about">
+      <h2>About</h2>
+      <p>
+        A home for the Malave family photos - gathered here so they are easy to
+        find, easy to share, and safe to keep. More albums are added as we scan
+        and sort them.
+      </p>
     </section>
 
-    <!-- ============ GALLERY ============ -->
-    <section class="gallery section" id="gallery">
+    <section class="contact" id="contact">
       <div class="wrap">
-        <div class="section-head reveal">
-          <p class="eyebrow">The album</p>
-          <h2>Photographs</h2>
-          <p class="section-sub">Tap any photo to view it larger.</p>
-        </div>
-
-        <div class="album" id="album">
-          <!-- Prints are generated by script.js so captions stay in one place -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ JOURNAL ============ -->
-    <section class="journal section" id="journal">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <p class="eyebrow">Journal</p>
-          <h2>Small stories</h2>
-          <p class="section-sub">Notes from the life we're living.</p>
-        </div>
-
-        <div class="journal-grid">
-          <article class="post reveal">
-            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
-              <img src="images/thumbnails/DSC00627.gif" alt="" width="80" height="60" loading="lazy">
-            </a>
-            <div class="post-body">
-              <p class="post-meta">Spring &middot; 2026</p>
-              <h3>Our first outing to the cornfield</h3>
-              <p>
-                Golden light, tall green rows, and a boy who couldn't stop
-                running. Some afternoons you know you'll remember forever.
-              </p>
-              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
-            </div>
-          </article>
-
-          <article class="post reveal">
-            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
-              <img src="images/thumbnails/DSC00593.gif" alt="" width="80" height="60" loading="lazy">
-            </a>
-            <div class="post-body">
-              <p class="post-meta">Winter &middot; 2026</p>
-              <h3>Cooking together, like always</h3>
-              <p>
-                The recipe came from my grandmother, then my mother, and now
-                it's being stirred by the smallest hands in the kitchen.
-              </p>
-              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
-            </div>
-          </article>
-
-          <article class="post reveal">
-            <a class="post-media" href="#journal" aria-hidden="true" tabindex="-1">
-              <img src="images/thumbnails/DSC00692.gif" alt="" width="80" height="60" loading="lazy">
-            </a>
-            <div class="post-body">
-              <p class="post-meta">Autumn &middot; 2025</p>
-              <h3>We planted a small garden</h3>
-              <p>
-                Tomatoes, beans, and a lot of hope. Watching things grow
-                beside the people you love is its own kind of magic.
-              </p>
-              <span class="post-link">Read the story<span aria-hidden="true"> &rarr;</span></span>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ CONTACT ============ -->
-    <section class="contact section" id="contact">
-      <div class="wrap contact-inner">
-        <div class="reveal">
-          <p class="eyebrow eyebrow-light">Say hello</p>
-          <h2>Let's stay in touch</h2>
-          <p class="contact-sub">
-            Send a note, share a memory, or ask for a photo from the archive.
-          </p>
-        </div>
-        <a class="btn btn-light reveal" href="mailto:ellis@malave.com">ellis@malave.com</a>
+        <h2>Say hello</h2>
+        <p>Reach out for a copy of any photo, or to add one of your own.</p>
+        <a class="btn" href="mailto:ellis@malave.com">ellis@malave.com</a>
       </div>
     </section>
   </main>
 
-  <!-- ============ FOOTER ============ -->
   <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <p class="footer-brand">The Malave Family</p>
-      <p class="footer-note">&copy; <span id="year">2026</span> malave.com &middot; Made with care.</p>
+    <div class="wrap">
+      <p>&copy; <span id="year">2026</span> malave.com</p>
     </div>
   </footer>
 
-  <!-- ============ LIGHTBOX ============ -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
-    <button class="lb-btn lb-close" aria-label="Close viewer">&times;</button>
+    <button class="lb-btn lb-close" aria-label="Close">&times;</button>
     <button class="lb-btn lb-prev" aria-label="Previous photo">&#8249;</button>
     <button class="lb-btn lb-next" aria-label="Next photo">&#8250;</button>
     <figure class="lb-figure">
       <img class="lb-img" id="lb-img" alt="">
-      <figcaption class="lb-caption" id="lb-caption"></figcaption>
+      <figcaption class="lb-cap" id="lb-cap"></figcaption>
     </figure>
   </div>
 

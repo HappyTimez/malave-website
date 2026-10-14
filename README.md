@@ -1,6 +1,7 @@
-# malave.com - The Malave Family
+# malave.com - Malave Family Photos
 
-A modern, one-page family website replacing the old table-based HTML design.
+A photo-first family website. The gallery is the point: photographs load as a
+plain masonry grid with no animation or JavaScript required to see them.
 
 ## Live site
 
@@ -8,73 +9,69 @@ A modern, one-page family website replacing the old table-based HTML design.
 
 ## Overview
 
-This project redesigns the malave.com family site. The original was an HTML 4.01
-Transitional page built with fixed-width tables and early-2000s JavaScript menus.
-It is now a single, responsive page with a warm, editorial "family archive"
-aesthetic: serif display type, framed photo prints, and a keyboard-accessible
-lightbox.
+The original site was an HTML 4.01, table-based page from the early 2000s that
+only ever displayed 80x60 pixel thumbnails. This rebuild recovers the
+higher-resolution originals from the Internet Archive and presents them as a
+clean, photo-first gallery.
 
-## Features
+## How it works
 
-| Feature | Description |
-| --- | --- |
-| **Single continuous page** | Hero, Story, Photo Album, Journal, Contact - all on one scroll |
-| **Family archive look** | Paper tones, serif display type, framed "print" photographs |
-| **Responsive album** | CSS Grid contact sheet that reflows to two columns on phones |
-| **Lightbox** | Click or press Enter on any print; arrow keys and `Esc` supported |
-| **Scroll reveal** | Sections fade in via `IntersectionObserver` |
-| **Accessible** | Semantic HTML5, skip link, focus states, `prefers-reduced-motion` |
-| **No dependencies** | Hand-written HTML, CSS, and vanilla JavaScript |
+- **Static gallery.** Every photo is written into `index.html` as plain HTML, so
+  the page is fully visible even with JavaScript disabled.
+- **Progressive enhancement.** Each photo is a normal link to its full image. When
+  JavaScript is available, `script.js` intercepts the click and opens an overlay
+  lightbox (arrow keys and `Esc` supported). No content depends on JS.
+- **Masonry layout.** CSS multi-column keeps the mixed photo aspect ratios tidy
+  without any scripting.
+
+## Photo archive
+
+Photos were recovered from the Wayback Machine at their best available sizes:
+
+| Album | Photos | Source size |
+| --- | --- | --- |
+| Featured - cornfield | 1 | 400x300 |
+| Family Favorites | 11 | 400x300 |
+| Fishing Trip, Summer 2003 | 20 | 640x480 |
+| New Year 2004 | 16 | 448x336 (one 336x448) |
+| August & September 2003 | 6 | 640x480 |
+
+The original homepage thumbnails (80x60 GIFs) are kept in
+`images/thumbnails/` for reference but are not displayed, since the recovered
+JPEGs are much larger.
 
 ## Project structure
 
 ```
 modern-redesign/
-├── index.html                 Main page: hero, story, album, journal, contact
-├── styles.css                 Design tokens, layout, gallery, lightbox
-├── script.js                  Album generation, lightbox, nav, reveal
+├── index.html      Static page + full gallery markup
+├── styles.css      Photo-first styling (no opacity/JS-gated visibility)
+├── script.js       Optional lightbox enhancement
 ├── images/
-│   ├── ellio-and-daddy-in-the-cornfield.jpg   Featured photo (400x300)
-│   ├── fallback.svg                            Placeholder graphic
-│   └── thumbnails/DSC*.gif                     16 archival thumbnails (80x60)
-├── .github/workflows/deploy.yml   Auto-deploy on push to master
+│   ├── ellio-and-daddy-in-the-cornfield.jpg
+│   ├── gallery/              Family Favorites (400x300)
+│   ├── albums/fishing2003/   640x480
+│   ├── albums/NewYear2004/   448x336
+│   ├── albums/August-2003/   640x480
+│   ├── albums/September-2003/ 640x480
+│   └── thumbnails/           original 80x60 GIFs (reference only)
+├── .github/workflows/deploy.yml
 └── README.md
 ```
 
-## Photo archive
-
-The album contains **16 thumbnails** plus **1 featured photo**. The originals were
-only ever stored as small thumbnails (80x60 px), so the design presents them as a
-contact sheet of physical prints rather than enlarging them. The wide featured
-photo is capped at 34rem to limit upscaling.
-
-## Local development
-
-Open `index.html` directly in a browser, or serve the folder:
+## Local preview
 
 ```bash
 cd modern-redesign && python3 -m http.server 8000
 ```
 
-Then visit http://localhost:8000.
+Then open http://localhost:8000.
 
 ## Deployment
 
-Pushing to `master` triggers `.github/workflows/deploy.yml`, which deploys over
-SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the
-`FTP_SSH_KEY` repository secret.
-
-> **Note:** the workflow uses `rsync --delete`. Everything served by the site must
-> live in this repository, and dotfiles are excluded from the sync.
-
-To deploy manually:
-
-```bash
-rsync -avz --delete \
-  --exclude '.git' --exclude '.github' --exclude 'README.md' \
-  -e "ssh -p 21098" \
-  ./ malamkte@209.74.67.64:/home/malamkte/public_html/
-```
+Pushing to `master` runs `.github/workflows/deploy.yml`, which syncs the site
+over SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the
+`FTP_SSH_KEY` secret. Dotfiles and this README are excluded from the sync.
 
 ## Contact
 
@@ -83,4 +80,4 @@ rsync -avz --delete \
 
 ---
 
-Personal family website - all photos and text belong to the Malave family.
+Personal family website - all photos belong to the Malave family.
