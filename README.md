@@ -1,28 +1,39 @@
-# malave.com - Malave Family Photos
+# malave.com - Malave Family
 
-A photo-first family website. The gallery is the point: photographs load as a
-plain masonry grid with no animation or JavaScript required to see them.
+A photo-first family website. The photographs are the point: they render as
+plain HTML with no animation and no JavaScript required to see them.
 
 ## Live site
 
 **https://malave.com**
 
-## Overview
+## Design
 
-The original site was an HTML 4.01, table-based page from the early 2000s that
-only ever displayed 80x60 pixel thumbnails. This rebuild recovers the
-higher-resolution originals from the Internet Archive and presents them as a
-clean, photo-first gallery.
+The layout and look are modelled on the Wix
+[Family Portrait Photographer (Classic)](https://www.wix.com/website-template/view/html/5590)
+template (live preview: `wix.com/sgtemplates/l-williams`) and rebuilt from
+scratch as static HTML/CSS with the Malave photographs:
+
+- Warm cream ground (`#fbf5ed`) and near-black brown ink (`#261a14`).
+- Geometric **Questrial** headings with tight letter-spacing; Helvetica Neue body.
+- A five-photo **collage hero** with an overlaid headline, "Explore" button.
+- An **About** split: a staggered photo collage beside "Our Story" / "Our Mission".
+- **Our Albums** - four feature cards, one per album.
+- A dark **feature band** for the Fishing, Summer 2003 album.
+- A **Portfolio** masonry grid containing every photo.
+- A centred pull-quote, a **Get In Touch** section with a contact form, and a slim footer.
 
 ## How it works
 
-- **Static gallery.** Every photo is written into `index.html` as plain HTML, so
-  the page is fully visible even with JavaScript disabled.
+- **Static content.** Every photo and all text are written into `index.html` as
+  plain HTML, so the page is fully visible even with JavaScript disabled.
 - **Progressive enhancement.** Each photo is a normal link to its full image. When
   JavaScript is available, `script.js` intercepts the click and opens an overlay
-  lightbox (arrow keys and `Esc` supported). No content depends on JS.
+  lightbox (arrow keys and `Esc` supported). Nothing is hidden without JS.
 - **Masonry layout.** CSS multi-column keeps the mixed photo aspect ratios tidy
   without any scripting.
+- **Contact form.** Posts via a `mailto:` action, so it needs no backend; the
+  email address is also shown as a plain link.
 
 ## Photo archive
 
@@ -44,8 +55,8 @@ JPEGs are much larger.
 
 ```
 modern-redesign/
-├── index.html      Static page + full gallery markup
-├── styles.css      Photo-first styling (no opacity/JS-gated visibility)
+├── index.html      Static page (hero, about, albums, feature, portfolio, contact)
+├── styles.css      Cream/brown editorial styling (no JS-gated visibility)
 ├── script.js       Optional lightbox enhancement
 ├── images/
 │   ├── ellio-and-daddy-in-the-cornfield.jpg
