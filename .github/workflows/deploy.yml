@@ -30,6 +30,8 @@ jobs:
           rsync -avz --delete \
             --exclude '.git' \
             --exclude '.github' \
+            --exclude '.opencode' \
+            --exclude 'AGENTS.md' \
             --exclude 'README.md' \
             --include 'images/uploads/.htaccess' \
             --include 'images/uploads/.gitkeep' \
