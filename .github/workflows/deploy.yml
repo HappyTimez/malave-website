@@ -24,10 +24,16 @@ jobs:
 
       - name: Deploy via SSH rsync
         run: |
+          # Uploaded media and the SQLite database are owned by the server, not the
+          # repository, so protect them from --delete. The uploads .htaccess is
+          # re-included so uploads can never execute PHP.
           rsync -avz --delete \
             --exclude '.git' \
             --exclude '.github' \
             --exclude 'README.md' \
+            --include 'images/uploads/.htaccess' \
+            --include 'images/uploads/.gitkeep' \
+            --exclude 'images/uploads/*' \
             -e "ssh -p 21098" \
             ./ malamkte@209.74.67.64:/home/malamkte/public_html/
 
