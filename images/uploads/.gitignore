@@ -1,0 +1,6 @@
+# Runtime uploads live only on the server. Keep the folder's config files,
+# ignore everything else so local test uploads never get committed.
+*
+!.gitignore
+!.htaccess
+!.gitkeep

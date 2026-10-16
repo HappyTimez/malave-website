@@ -1,39 +1,53 @@
 # malave.com - Malave Family
 
-A photo-first family website. The photographs are the point: they render as
-plain HTML with no animation and no JavaScript required to see them.
+A photo-first family website with a small self-hosted admin for adding photos and
+editing the page, running on ordinary PHP hosting (no framework, no database
+server).
 
 ## Live site
 
-**https://malave.com**
-
-## Design
-
-The layout and look are modelled on the Wix
-[Family Portrait Photographer (Classic)](https://www.wix.com/website-template/view/html/5590)
-template (live preview: `wix.com/sgtemplates/l-williams`) and rebuilt from
-scratch as static HTML/CSS with the Malave photographs:
-
-- Warm cream ground (`#fbf5ed`) and near-black brown ink (`#261a14`).
-- Geometric **Questrial** headings with tight letter-spacing; Helvetica Neue body.
-- A five-photo **collage hero** with an overlaid headline, "Explore" button.
-- An **About** split: a staggered photo collage beside "Our Story" / "Our Mission".
-- **Our Albums** - four feature cards, one per album.
-- A dark **feature band** for the Fishing, Summer 2003 album.
-- A **Portfolio** masonry grid containing every photo.
-- A centred pull-quote, a **Get In Touch** section with a contact form, and a slim footer.
+**https://malave.com** - public page
+**https://malave.com/admin/** - password-protected admin
 
 ## How it works
 
-- **Static content.** Every photo and all text are written into `index.html` as
-  plain HTML, so the page is fully visible even with JavaScript disabled.
-- **Progressive enhancement.** Each photo is a normal link to its full image. When
-  JavaScript is available, `script.js` intercepts the click and opens an overlay
-  lightbox (arrow keys and `Esc` supported). Nothing is hidden without JS.
-- **Masonry layout.** CSS multi-column keeps the mixed photo aspect ratios tidy
-  without any scripting.
-- **Contact form.** Posts via a `mailto:` action, so it needs no backend; the
-  email address is also shown as a plain link.
+- **Server-rendered page.** `index.php` builds the whole page from the database on
+  every request, so visitors get plain HTML. It still works with JavaScript
+  disabled; the lightbox is pure progressive enhancement.
+- **SQLite database.** All text, albums and photo records live in a single SQLite
+  file kept **outside the web root** (`../malave-data/site.sqlite`), so it can
+  never be downloaded.
+- **Admin area.** `/admin/` handles sign-in, photo uploads (with automatic resize
+  and thumbnailing via Imagick), album and photo management, the page text, a
+  password change and a JSON backup.
+- **Design.** Layout and typography follow the Wix "Family Portrait Photographer
+  (Classic)" template: warm cream ground (`#fbf5ed`), near-black brown ink
+  (`#261a14`), geometric Questrial headings.
+
+## Admin guide
+
+Sign in at `/admin/` (or run the one-time `/admin/setup.php` if no password is
+set yet). The dashboard has four sections:
+
+- **Text & images** - edit every heading and paragraph, and choose the photos for
+  the hero collage, the About collage and the featured band.
+- **Albums** - add, rename, describe, reorder, hide/show or delete albums.
+- **Photos** - pick an album, upload photos (multiple at once), edit titles and
+  captions, reorder, and delete.
+- **Account** - change the password and download a JSON backup.
+
+Uploads are validated (real image type, size cap), the original is kept under
+`images/uploads/original/`, and a web version plus a thumbnail are generated.
+
+## Security
+
+- Password stored as an Argon2id hash in `../malave-config/config.php`, outside
+  the web root and readable only by the account (`0600`).
+- Session cookie is `HttpOnly`, `Secure` and `SameSite=Strict`; sessions are
+  regenerated on sign-in.
+- CSRF token on every form; sign-in is throttled after repeated failures.
+- `library/` is denied by `.htaccess`; uploaded files can never execute PHP.
+- HTTPS is forced by `.htaccess`.
 
 ## Photo archive
 
@@ -47,42 +61,57 @@ Photos were recovered from the Wayback Machine at their best available sizes:
 | New Year 2004 | 16 | 448x336 (one 336x448) |
 | August & September 2003 | 6 | 640x480 |
 
-The original homepage thumbnails (80x60 GIFs) are kept in
-`images/thumbnails/` for reference but are not displayed, since the recovered
-JPEGs are much larger.
-
 ## Project structure
 
 ```
 modern-redesign/
-├── index.html      Static page (hero, about, albums, feature, portfolio, contact)
-├── styles.css      Cream/brown editorial styling (no JS-gated visibility)
-├── script.js       Optional lightbox enhancement
-├── images/
-│   ├── ellio-and-daddy-in-the-cornfield.jpg
-│   ├── gallery/              Family Favorites (400x300)
-│   ├── albums/fishing2003/   640x480
-│   ├── albums/NewYear2004/   448x336
-│   ├── albums/August-2003/   640x480
-│   ├── albums/September-2003/ 640x480
-│   └── thumbnails/           original 80x60 GIFs (reference only)
-├── .github/workflows/deploy.yml
-└── README.md
+├── index.php                  Public entry point (server-rendered)
+├── .htaccess                  HTTPS, security headers, dotfile deny
+├── styles.css, script.js      Public styling + lightbox enhancement
+├── library/                   Application code (denied by .htaccess)
+│   ├── bootstrap.php          Config, session, CSRF, auth, throttling
+│   ├── db.php                 SQLite schema + first-run seed
+│   ├── repo.php               Data access
+│   ├── image.php              Upload validation + resizing
+│   ├── render.php             Public HTML
+│   └── admin_layout.php       Admin chrome
+├── admin/                     Password-protected admin
+│   ├── index.php  actions.php  login.php  logout.php
+│   ├── setup.php  backup.php   admin.css
+├── images/                    Photos (gallery/, albums/, uploads/)
+└── .github/workflows/deploy.yml
 ```
 
 ## Local preview
 
+Requires PHP 8.1+ with `gd`/`imagick` and `pdo_sqlite`:
+
 ```bash
-cd modern-redesign && python3 -m http.server 8000
+cd modern-redesign
+MALAVE_DATA_DIR=/tmp/malave-data MALAVE_CONFIG_FILE=/tmp/malave-config/config.php \
+  php -S localhost:8000
 ```
 
-Then open http://localhost:8000.
+Then open http://localhost:8000 (and `/admin/setup.php` to set a password).
 
 ## Deployment
 
-Pushing to `master` runs `.github/workflows/deploy.yml`, which syncs the site
-over SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the
-`FTP_SSH_KEY` secret. Dotfiles and this README are excluded from the sync.
+Pushing to `master` runs `.github/workflows/deploy.yml`, which syncs the site over
+SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the `FTP_SSH_KEY`
+secret.
+
+Two directories are **excluded** from the sync so a deploy never deletes live
+content:
+
+- `images/uploads/` - photos added through the admin
+- `.git`, `.github`, `README.md`
+
+The database and config live outside `public_html`, so they are untouched by
+deploys. Back them up:
+
+```bash
+scp -P 21098 malamkte@209.74.67.64:'~/malave-data/site.sqlite ~/malave-config/config.php' ./backup/
+```
 
 ## Contact
 

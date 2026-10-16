@@ -1,0 +1,178 @@
+/* =========================================================
+   Malave Family - admin styling (separate from the public site)
+   ========================================================= */
+
+:root {
+  --ink: #261a14;
+  --cream: #fbf5ed;
+  --cream-2: #f4ebdd;
+  --muted: #6f6157;
+  --line: #e0d3c1;
+  --accent: #745f4f;
+  --danger: #a4331f;
+  --ok: #2f6b3a;
+  --radius: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+body.admin {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+
+/* ---------- Top bar ---------- */
+.admin-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  padding: 0.9rem clamp(1rem, 4vw, 2rem);
+  background: var(--ink); color: var(--cream);
+  position: sticky; top: 0; z-index: 10;
+}
+.admin-brand { color: var(--cream); text-decoration: none; font-size: 1.05rem; }
+.admin-brand span { opacity: .6; font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; }
+.admin-nav { display: flex; gap: 1.25rem; }
+.admin-nav a { color: var(--cream); text-decoration: none; font-size: .85rem; opacity: .85; }
+.admin-nav a:hover { opacity: 1; text-decoration: underline; }
+
+.admin-main {
+  max-width: 1080px; margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem) 4rem;
+}
+.admin-main h1 { font-size: 1.6rem; margin-bottom: 1rem; }
+.admin-main h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+.admin-main h3 { font-size: 1rem; margin: 1.5rem 0 .75rem; }
+
+/* ---------- Panels ---------- */
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  margin-bottom: 1.5rem;
+  scroll-margin-top: 5rem;
+}
+
+.jump {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.jump a { font-size: .9rem; text-decoration: none; }
+.jump a:hover { text-decoration: underline; }
+
+.flash {
+  background: #eef6ef; border: 1px solid #bfe0c5; color: var(--ok);
+  padding: .7rem .9rem; border-radius: var(--radius); margin-bottom: 1rem;
+}
+.flash.error { background: #fbeeec; border-color: #e6bdb5; color: var(--danger); }
+
+.muted { color: var(--muted); }
+.small { font-size: .82rem; }
+
+/* ---------- Forms ---------- */
+label { display: block; font-size: .85rem; }
+label small { color: var(--muted); font-weight: normal; }
+
+input[type="text"], input[type="password"], input[type="email"], textarea, select {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: .5rem .6rem;
+  margin-top: .3rem;
+}
+select[multiple] { min-height: 9rem; }
+textarea { resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.grid-2 .wide { grid-column: 1 / -1; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.pickers { margin-top: 1.25rem; }
+
+.row-form {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: .9rem;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+.row-fields {
+  display: flex; gap: .9rem; flex-wrap: wrap; align-items: flex-end;
+  margin-bottom: .75rem;
+}
+.row-fields .grow { flex: 1 1 16rem; }
+.row-fields label.inline {
+  display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+}
+.row-fields label.inline input { width: auto; margin: 0; }
+.row-actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+
+.album-row .row-fields label:first-child { flex: 0 0 14rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  font: inherit; font-size: .9rem;
+  padding: .55rem 1.1rem;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: var(--ink); color: var(--cream);
+  cursor: pointer; text-decoration: none;
+}
+.btn:hover { background: #3a2a20; }
+.btn.small { font-size: .82rem; padding: .4rem .8rem; }
+.btn.tiny { font-size: .78rem; padding: .3rem .6rem; }
+.btn.ghost { background: #fff; color: var(--ink); }
+.btn.ghost:hover { background: var(--cream-2); }
+.btn.danger { background: #fff; color: var(--danger); border-color: #d8a79c; }
+.btn.danger:hover { background: #fbeeec; }
+
+/* ---------- Photo grid ---------- */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+.photo-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: .6rem;
+  background: var(--cream);
+}
+.photo-card img {
+  width: 100%; height: 150px; object-fit: cover;
+  border-radius: 6px; background: var(--cream-2); display: block;
+}
+.photo-card input { margin-top: .5rem; font-size: .85rem; }
+.photo-card .row-actions { margin-top: .5rem; }
+
+.upload-row { background: var(--cream-2); }
+
+/* ---------- Login / setup ---------- */
+.admin-center {
+  display: grid; place-items: center;
+  min-height: 100vh; padding: 1.5rem;
+}
+.card-login {
+  width: 100%; max-width: 24rem;
+  background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+.card-login h1 { font-size: 1.35rem; margin-bottom: .35rem; }
+.card-login label { margin-top: 1rem; }
+.card-login .btn { margin-top: 1.25rem; width: 100%; }
+
+@media (max-width: 720px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .album-row .row-fields label:first-child { flex: 1 1 100%; }
+}
