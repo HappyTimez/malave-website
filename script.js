@@ -61,13 +61,22 @@
     if (e.target === lb) close();
   });
 
+  var focusables = [btnClose, btnPrev, btnNext];
+
   document.addEventListener("keydown", function (e) {
     if (lb.hidden) return;
     if (e.key === "Escape") close();
     else if (e.key === "ArrowLeft") render(current - 1);
     else if (e.key === "ArrowRight") render(current + 1);
+    else if (e.key === "Tab") {
+      var idx = focusables.indexOf(document.activeElement);
+      if (e.shiftKey) {
+        idx = idx <= 0 ? focusables.length - 1 : idx - 1;
+      } else {
+        idx = idx === -1 || idx >= focusables.length - 1 ? 0 : idx + 1;
+      }
+      e.preventDefault();
+      focusables[idx].focus();
+    }
   });
-
-  var year = document.getElementById("year");
-  if (year) year.textContent = String(new Date().getFullYear());
 })();

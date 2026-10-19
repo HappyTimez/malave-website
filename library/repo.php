@@ -10,10 +10,10 @@ if (!defined('MALAVE_APP')) {
     exit('Forbidden');
 }
 
-function malave_settings(): array
+function malave_settings(bool $refresh = false): array
 {
     static $cache = null;
-    if (is_array($cache)) {
+    if (!$refresh && is_array($cache)) {
         return $cache;
     }
     $out = [];
@@ -39,6 +39,7 @@ function malave_settings_set(array $values): void
         $stmt->execute([(string) $key, (string) $value]);
     }
     $pdo->commit();
+    malave_settings(true);
 }
 
 /** Decode a JSON array of ids into a clean list of positive integers. */

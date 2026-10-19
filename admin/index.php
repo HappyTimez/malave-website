@@ -42,6 +42,8 @@ $activeAlbumId = (int) ($_GET['album'] ?? 0);
 if ($activeAlbumId <= 0 || !isset($albumTitles[$activeAlbumId])) {
     $activeAlbumId = (int) ($albums[0]['id'] ?? 0);
 }
+$activeAlbum = $activeAlbumId > 0 ? malave_album($activeAlbumId) : null;
+$activeCoverId = (int) ($activeAlbum['cover_photo_id'] ?? 0);
 $activePhotos = $activeAlbumId > 0 ? malave_photos($activeAlbumId) : [];
 
 $settingsFields = [
@@ -200,6 +202,7 @@ malave_admin_header('Dashboard');
           <input type="text" name="caption" value="<?= h((string) $photo['caption']) ?>" placeholder="Caption">
           <div class="row-actions">
             <button name="action" value="photo_save" class="btn tiny">Save</button>
+            <button name="action" value="photo_cover" class="btn tiny ghost" title="Set as album cover"<?= $pid === $activeCoverId ? ' disabled' : '' ?>><?= $pid === $activeCoverId ? 'Cover ✓' : 'Cover' ?></button>
             <button name="action" value="photo_up" class="btn tiny ghost" title="Move up">&uarr;</button>
             <button name="action" value="photo_down" class="btn tiny ghost" title="Move down">&darr;</button>
             <button name="action" value="photo_delete" class="btn tiny danger"
@@ -226,7 +229,18 @@ malave_admin_header('Dashboard');
       <button type="submit" class="btn small">Change password</button>
     </div>
   </form>
-  <p class="muted small">Backups: <a href="backup.php">download a JSON copy of all text and photo records</a>.</p>
+  <form method="post" action="actions.php" enctype="multipart/form-data" class="row-form">
+    <?= malave_csrf_field() ?>
+    <input type="hidden" name="action" value="backup_restore">
+    <div class="row-fields">
+      <label class="grow">Backups: <a href="backup.php">download a JSON copy of all text and photo records</a>, or choose a backup file to restore
+        <input type="file" name="backup" accept="application/json,.json" required>
+      </label>
+    </div>
+    <div class="row-actions">
+      <button type="submit" class="btn small ghost" onclick="return confirm('Restore text, albums, and photo records from this backup file?')">Restore backup</button>
+    </div>
+  </form>
 </section>
 <?php
 malave_admin_footer();

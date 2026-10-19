@@ -38,6 +38,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 
 header('Content-Type: text/html; charset=UTF-8');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
 $brand = h(malave_setting('brand', 'Malave Family'));
 $errorHtml = $error !== '' ? '<p class="flash error">' . h($error) . '</p>' : '';
 $csrf = malave_csrf_field();

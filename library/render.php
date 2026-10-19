@@ -11,9 +11,10 @@ if (!defined('MALAVE_APP')) {
     exit('Forbidden');
 }
 
-function malave_img_tag(array $photo, string $loading = 'lazy', string $alt = ''): string
+function malave_img_tag(array $photo, string $loading = 'lazy', string $alt = '', bool $thumb = false): string
 {
-    $src = h(malave_url((string) $photo['file']));
+    $path = ($thumb && !empty($photo['thumb'])) ? (string) $photo['thumb'] : (string) $photo['file'];
+    $src = h(malave_url($path));
     $width = (int) ($photo['width'] ?? 0);
     $height = (int) ($photo['height'] ?? 0);
     $dims = ($width > 0 && $height > 0) ? " width=\"{$width}\" height=\"{$height}\"" : '';
@@ -26,6 +27,17 @@ function malave_render_page(): string
     $albums = malave_albums(true);
     $portfolio = malave_photos(null, true);
 
+    $photosById = [];
+    $firstByAlbum = [];
+    foreach ($portfolio as $p) {
+        $pid = (int) $p['id'];
+        $aid = (int) $p['album_id'];
+        $photosById[$pid] = $p;
+        if (!isset($firstByAlbum[$aid])) {
+            $firstByAlbum[$aid] = $p;
+        }
+    }
+
     $heroPhotos = array_slice(malave_photos_by_ids(malave_json_ids($s['hero_photos'] ?? '')), 0, 5);
     if (!$heroPhotos) {
         $heroPhotos = array_slice($portfolio, 0, 5);
@@ -34,7 +46,8 @@ function malave_render_page(): string
     if (!$aboutPhotos) {
         $aboutPhotos = array_slice($portfolio, 0, 4);
     }
-    $featurePhoto = malave_photo((int) ($s['feature_photo'] ?? 0));
+    $featureId = (int) ($s['feature_photo'] ?? 0);
+    $featurePhoto = $featureId > 0 ? ($photosById[$featureId] ?? malave_photo($featureId)) : null;
     if (!$featurePhoto) {
         $featurePhoto = $portfolio[0] ?? null;
     }
@@ -79,15 +92,13 @@ function malave_render_page(): string
     // Album cards.
     $cards = '';
     foreach ($albums as $album) {
-        $cover = null;
-        if (!empty($album['cover_photo_id'])) {
-            $cover = malave_photo((int) $album['cover_photo_id']);
-        }
+        $aid = (int) $album['id'];
+        $coverId = (int) ($album['cover_photo_id'] ?? 0);
+        $cover = $coverId > 0 ? ($photosById[$coverId] ?? malave_photo($coverId)) : null;
         if (!$cover) {
-            $firstId = malave_first_photo_id((int) $album['id']);
-            $cover = $firstId ? malave_photo($firstId) : null;
+            $cover = $firstByAlbum[$aid] ?? null;
         }
-        $media = $cover ? malave_img_tag($cover, 'lazy', (string) $album['title']) : '';
+        $media = $cover ? malave_img_tag($cover, 'lazy', (string) $album['title'], true) : '';
         $cards .= '        <a class="card" href="#portfolio">' . "\n"
             . '          <span class="card-media">' . $media . "</span>\n"
             . '          <h3>' . h((string) $album['title']) . "</h3>\n"
@@ -101,7 +112,7 @@ function malave_render_page(): string
     foreach ($portfolio as $photo) {
         $tiles .= '          <a href="' . h(malave_url((string) $photo['file'])) . '" data-lb data-album="'
             . h((string) ($photo['title'] ?: 'Malave family photo')) . '">'
-            . malave_img_tag($photo, 'lazy', (string) ($photo['caption'] ?: 'Malave family photo')) . "</a>\n";
+            . malave_img_tag($photo, 'lazy', (string) ($photo['caption'] ?: 'Malave family photo'), true) . "</a>\n";
     }
 
     // Feature band (only when a photo is available).

@@ -30,9 +30,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         try {
             malave_write_config([
                 'password_hash' => malave_hash_password($password),
-                'app_secret'    => bin2hex(random_bytes(32)),
                 'created_at'    => gmdate('c'),
-            ]);
+            ], true);
             malave_flash('Password set. Please sign in.');
             malave_redirect('login.php');
         } catch (Throwable $e) {
@@ -43,6 +42,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 
 header('Content-Type: text/html; charset=UTF-8');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
 $brand = h(malave_setting('brand', 'Malave Family'));
 $errorHtml = $error !== '' ? '<p class="flash error">' . h($error) . '</p>' : '';
 $csrf = malave_csrf_field();

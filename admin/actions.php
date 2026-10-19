@@ -168,6 +168,18 @@ try {
             }
             break;
 
+        case 'photo_cover':
+            $id = (int) ($_POST['photo_id'] ?? 0);
+            $photo = malave_photo($id);
+            if ($photo) {
+                $albumId = (int) $photo['album_id'];
+                $stmt = $pdo->prepare('UPDATE albums SET cover_photo_id = ? WHERE id = ?');
+                $stmt->execute([$id, $albumId]);
+                $return = 'index.php?album=' . $albumId . '#photos';
+                malave_flash('Album cover updated.');
+            }
+            break;
+
         case 'photo_up':
         case 'photo_down':
             $id = (int) ($_POST['photo_id'] ?? 0);
@@ -176,6 +188,12 @@ try {
                 malave_move_photo($id, $action === 'photo_up' ? -1 : 1);
                 $return = 'index.php?album=' . (int) $photo['album_id'] . '#photos';
             }
+            break;
+
+        case 'backup_restore':
+            malave_restore_backup($pdo, $_FILES['backup'] ?? []);
+            $return = 'index.php#account';
+            malave_flash('Backup restored.');
             break;
 
         case 'password_change':
@@ -304,3 +322,101 @@ function malave_move_photo(int $id, int $direction): void
     }
     $pdo->commit();
 }
+
+function malave_restore_backup(PDO $pdo, array $file): void
+{
+    if (!isset($file['error']) || is_array($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Please choose a valid backup JSON file.');
+    }
+    $size = (int) ($file['size'] ?? 0);
+    if ($size <= 0 || $size > 5242880 || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('Invalid backup file.');
+    }
+    $raw = @file_get_contents($file['tmp_name']);
+    $data = is_string($raw) ? json_decode($raw, true) : null;
+    if (!is_array($data) || !isset($data['settings'], $data['albums'], $data['photos'])
+        || !is_array($data['settings']) || !is_array($data['albums']) || !is_array($data['photos'])) {
+        throw new RuntimeException('That file is not a valid Malave backup.');
+    }
+
+    $safePath = static function (string $p): string {
+        $p = ltrim($p, '/');
+        if ($p === '' || str_contains($p, '..') || !str_starts_with($p, 'images/')) {
+            return '';
+        }
+        return $p;
+    };
+
+    $pdo->beginTransaction();
+    try {
+        $pdo->exec('DELETE FROM photos');
+        $pdo->exec('DELETE FROM albums');
+        $pdo->exec('DELETE FROM settings');
+
+        $insSetting = $pdo->prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
+        foreach ($data['settings'] as $k => $v) {
+            if (is_string($k) && (is_string($v) || is_numeric($v))) {
+                $insSetting->execute([$k, (string) $v]);
+            }
+        }
+
+        $insAlbum = $pdo->prepare(
+            'INSERT INTO albums (id, slug, title, description, visible, sort, cover_photo_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+        foreach ($data['albums'] as $a) {
+            if (!is_array($a) || empty($a['id']) || empty($a['title'])) {
+                continue;
+            }
+            $id = (int) $a['id'];
+            $title = trim((string) $a['title']);
+            $slug = trim((string) ($a['slug'] ?? '')) ?: malave_slugify($title);
+            $coverId = !empty($a['cover_photo_id']) ? (int) $a['cover_photo_id'] : null;
+            $insAlbum->execute([
+                $id,
+                $slug,
+                $title,
+                (string) ($a['description'] ?? ''),
+                ((int) ($a['visible'] ?? 1)) ? 1 : 0,
+                (int) ($a['sort'] ?? 0),
+                $coverId,
+            ]);
+        }
+
+        $insPhoto = $pdo->prepare(
+            'INSERT INTO photos (id, album_id, file, thumb, original, width, height, title, caption, sort, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        foreach ($data['photos'] as $p) {
+            if (!is_array($p) || empty($p['id']) || empty($p['album_id'])) {
+                continue;
+            }
+            $filePath = $safePath((string) ($p['file'] ?? ''));
+            if ($filePath === '') {
+                continue;
+            }
+            $thumbPath = $safePath((string) ($p['thumb'] ?? '')) ?: $filePath;
+            $origPath = $safePath((string) ($p['original'] ?? ''));
+            $insPhoto->execute([
+                (int) $p['id'],
+                (int) $p['album_id'],
+                $filePath,
+                $thumbPath,
+                $origPath,
+                max(0, (int) ($p['width'] ?? 0)),
+                max(0, (int) ($p['height'] ?? 0)),
+                (string) ($p['title'] ?? ''),
+                (string) ($p['caption'] ?? ''),
+                (int) ($p['sort'] ?? 0),
+                (string) ($p['created_at'] ?? gmdate('c')),
+            ]);
+        }
+
+        malave_db_seed($pdo);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw new RuntimeException('Could not restore backup: ' . $e->getMessage());
+    }
+}
+

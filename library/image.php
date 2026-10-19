@@ -195,14 +195,26 @@ function malave_store_upload(array $file, string $label = ''): array
     }
     @chmod($origAbs, 0644);
 
-    [$webW, $webH] = malave_write_derivative($origAbs, MALAVE_ROOT . '/' . $webRel, MALAVE_WEB_MAX_DIM, 84);
-    malave_write_derivative($origAbs, MALAVE_ROOT . '/' . $thumbRel, MALAVE_THUMB_MAX_DIM, 80);
+    $webAbs = MALAVE_ROOT . '/' . $webRel;
+    $thumbAbs = MALAVE_ROOT . '/' . $thumbRel;
+    try {
+        [$webW, $webH] = malave_write_derivative($origAbs, $webAbs, MALAVE_WEB_MAX_DIM, 84);
+        malave_write_derivative($origAbs, $thumbAbs, MALAVE_THUMB_MAX_DIM, 80);
+    } catch (Throwable $e) {
+        foreach ([$origAbs, $webAbs, $thumbAbs] as $partial) {
+            if (is_file($partial)) {
+                @unlink($partial);
+            }
+        }
+        throw $e;
+    }
 
     return [
-        'file'   => $webRel,
-        'thumb'  => $thumbRel,
-        'width'  => $webW ?: $width,
-        'height' => $webH ?: $height,
+        'file'     => $webRel,
+        'thumb'    => $thumbRel,
+        'original' => $origRel,
+        'width'    => $webW ?: $width,
+        'height'   => $webH ?: $height,
     ];
 }
 

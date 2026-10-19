@@ -11,6 +11,8 @@ if (!defined('MALAVE_APP')) {
     exit('Forbidden');
 }
 
+const MALAVE_SCHEMA_VERSION = 1;
+
 function malave_db(): PDO
 {
     static $pdo = null;
@@ -34,9 +36,13 @@ function malave_db(): PDO
     $pdo->exec('PRAGMA journal_mode = WAL');
     $pdo->exec('PRAGMA busy_timeout = 5000');
 
-    malave_db_migrate($pdo);
-    malave_db_seed($pdo);
-    @chmod($file, 0600);
+    $version = (int) $pdo->query('PRAGMA user_version')->fetchColumn();
+    if ($version < MALAVE_SCHEMA_VERSION) {
+        malave_db_migrate($pdo);
+        malave_db_seed($pdo);
+        $pdo->exec('PRAGMA user_version = ' . MALAVE_SCHEMA_VERSION);
+        @chmod($file, 0600);
+    }
 
     return $pdo;
 }
@@ -72,6 +78,21 @@ function malave_db_migrate(PDO $pdo): void
         );
         CREATE INDEX IF NOT EXISTS idx_photos_album ON photos(album_id, sort);
         SQL);
+
+    // Backfill original file paths for any uploads created before original was recorded.
+    $rows = $pdo->query("SELECT id, file FROM photos WHERE original = '' AND file LIKE 'images/uploads/%'")->fetchAll();
+    if ($rows) {
+        $upd = $pdo->prepare('UPDATE photos SET original = ? WHERE id = ?');
+        $origDir = MALAVE_ROOT . '/images/uploads/original';
+        foreach ($rows as $row) {
+            $stem = pathinfo((string) $row['file'], PATHINFO_FILENAME);
+            $matches = glob($origDir . '/' . $stem . '.*') ?: [];
+            if ($matches) {
+                $rel = 'images/uploads/original/' . basename($matches[0]);
+                $upd->execute([$rel, (int) $row['id']]);
+            }
+        }
+    }
 }
 
 /** Default site copy, mirroring the original hand-built page. */

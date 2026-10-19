@@ -15,6 +15,8 @@ function malave_admin_header(string $title): void
     $brand = h(malave_setting('brand', 'Malave Family'));
     $flash = malave_flash();
     header('Content-Type: text/html; charset=UTF-8');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
     $titleHtml = h($title);
     $flashHtml = '';
     if ($flash) {

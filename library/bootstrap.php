@@ -14,7 +14,6 @@ if (!defined('MALAVE_APP')) {
 define('MALAVE_ROOT', dirname(__DIR__));
 define('MALAVE_DATA_DIR', getenv('MALAVE_DATA_DIR') ?: dirname(MALAVE_ROOT) . '/malave-data');
 define('MALAVE_CONFIG_FILE', getenv('MALAVE_CONFIG_FILE') ?: dirname(MALAVE_ROOT) . '/malave-config/config.php');
-define('MALAVE_UPLOAD_URL', 'images/uploads');
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
@@ -51,14 +50,18 @@ function malave_config_exists(): bool
 }
 
 /** Create or update the config file (stored outside the web root, mode 0600). */
-function malave_write_config(array $values): void
+function malave_write_config(array $values, bool $createOnly = false): void
 {
     $dir = dirname(MALAVE_CONFIG_FILE);
     if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) {
         throw new RuntimeException('Cannot create the configuration directory.');
     }
     $php = "<?php\n\nreturn " . var_export($values, true) . ";\n";
-    if (@file_put_contents(MALAVE_CONFIG_FILE, $php, LOCK_EX) === false) {
+    $flags = LOCK_EX;
+    if ($createOnly && is_file(MALAVE_CONFIG_FILE)) {
+        throw new RuntimeException('Configuration already exists.');
+    }
+    if (@file_put_contents(MALAVE_CONFIG_FILE, $php, $flags) === false) {
         throw new RuntimeException('Cannot write the configuration file.');
     }
     @chmod(MALAVE_CONFIG_FILE, 0600);
@@ -83,7 +86,15 @@ function malave_is_https(): bool
     if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
         return true;
     }
-    return strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+    if ((int) ($_SERVER['SERVER_PORT'] ?? 0) === 443) {
+        return true;
+    }
+    $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $server = (string) ($_SERVER['SERVER_ADDR'] ?? '');
+    if ($remote !== '' && ($remote === '127.0.0.1' || $remote === '::1' || $remote === $server)) {
+        return strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+    }
+    return false;
 }
 
 function malave_session_start(): void
@@ -199,8 +210,48 @@ function malave_throttle_state(): array
     if (!is_file($file)) {
         return [];
     }
-    $data = json_decode((string) @file_get_contents($file), true);
+    $fp = @fopen($file, 'r');
+    if ($fp === false) {
+        return [];
+    }
+    try {
+        flock($fp, LOCK_SH);
+        $raw = stream_get_contents($fp);
+        flock($fp, LOCK_UN);
+    } finally {
+        fclose($fp);
+    }
+    $data = is_string($raw) ? json_decode($raw, true) : null;
     return is_array($data) ? $data : [];
+}
+
+/** Atomically read, mutate, and write throttle state under an exclusive lock. */
+function malave_throttle_mutate(callable $fn): void
+{
+    $file = malave_throttle_path();
+    $fp = @fopen($file, 'c+');
+    if ($fp === false) {
+        return;
+    }
+    @chmod($file, 0600);
+    try {
+        if (!flock($fp, LOCK_EX)) {
+            return;
+        }
+        $raw = stream_get_contents($fp);
+        $state = is_string($raw) && $raw !== '' ? json_decode($raw, true) : [];
+        if (!is_array($state)) {
+            $state = [];
+        }
+        $state = $fn($state);
+        ftruncate($fp, 0);
+        rewind($fp);
+        fwrite($fp, (string) json_encode($state));
+        fflush($fp);
+        flock($fp, LOCK_UN);
+    } finally {
+        fclose($fp);
+    }
 }
 
 function malave_throttle_key(): string
@@ -224,29 +275,31 @@ function malave_throttle_remaining(): int
 function malave_throttle_fail(): void
 {
     $key = malave_throttle_key();
-    $state = malave_throttle_state();
-    $now = time();
-    $entry = $state[$key] ?? ['count' => 0, 'until' => 0];
-    $entry['count'] = (int) $entry['count'] + 1;
-    if ($entry['count'] >= 5) {
-        $entry['until'] = $now + 900; // lock for 15 minutes
-        $entry['count'] = 0;
-    }
-    $state[$key] = $entry;
-
-    // Drop stale entries.
-    foreach ($state as $k => $v) {
-        if ((int) ($v['until'] ?? 0) < $now - 3600) {
-            unset($state[$k]);
+    malave_throttle_mutate(static function (array $state) use ($key): array {
+        $now = time();
+        $entry = $state[$key] ?? ['count' => 0, 'until' => 0];
+        $entry['count'] = (int) ($entry['count'] ?? 0) + 1;
+        if ($entry['count'] >= 5) {
+            $entry['until'] = $now + 900; // lock for 15 minutes
+            $entry['count'] = 0;
         }
-    }
-    @file_put_contents(malave_throttle_path(), json_encode($state), LOCK_EX);
+        $state[$key] = $entry;
+
+        // Drop stale entries.
+        foreach ($state as $k => $v) {
+            if ((int) ($v['until'] ?? 0) < $now - 3600 && (int) ($v['count'] ?? 0) === 0) {
+                unset($state[$k]);
+            }
+        }
+        return $state;
+    });
 }
 
 function malave_throttle_clear(): void
 {
     $key = malave_throttle_key();
-    $state = malave_throttle_state();
-    unset($state[$key]);
-    @file_put_contents(malave_throttle_path(), json_encode($state), LOCK_EX);
+    malave_throttle_mutate(static function (array $state) use ($key): array {
+        unset($state[$key]);
+        return $state;
+    });
 }
