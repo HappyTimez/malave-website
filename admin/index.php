@@ -233,7 +233,7 @@ malave_admin_header('Dashboard');
     <?= malave_csrf_field() ?>
     <input type="hidden" name="action" value="backup_restore">
     <div class="row-fields">
-      <label class="grow">Backups: <a href="backup.php">download a JSON copy of all text and photo records</a>, or choose a backup file to restore
+      <label class="grow">Backups: <a href="backup.php">download a JSON copy of all text and photo records</a>, or restore records from a JSON backup (image files must remain on the server)
         <input type="file" name="backup" accept="application/json,.json" required>
       </label>
     </div>

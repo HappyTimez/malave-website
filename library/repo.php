@@ -26,8 +26,7 @@ function malave_settings(bool $refresh = false): array
 function malave_setting(string $key, string $default = ''): string
 {
     $all = malave_settings();
-    $value = $all[$key] ?? '';
-    return $value === '' ? $default : $value;
+    return array_key_exists($key, $all) ? $all[$key] : $default;
 }
 
 function malave_settings_set(array $values): void

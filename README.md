@@ -100,11 +100,11 @@ Pushing to `master` runs `.github/workflows/deploy.yml`, which syncs the site ov
 SSH rsync (port `21098`) to `/home/malamkte/public_html/` using the `FTP_SSH_KEY`
 secret.
 
-Two directories are **excluded** from the sync so a deploy never deletes live
-content:
+The following paths are **excluded** from the sync so a deploy never deletes
+live content or exposes repository metadata:
 
-- `images/uploads/` - photos added through the admin
-- `.git`, `.github`, `README.md`
+- `images/uploads/*` - photos added through the admin (while `images/uploads/.htaccess` and `.gitkeep` are re-included)
+- `.git`, `.github`, `.opencode`, `AGENTS.md`, `README.md`
 
 The database and config live outside `public_html`, so they are untouched by
 deploys. Back them up:

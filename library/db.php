@@ -38,9 +38,18 @@ function malave_db(): PDO
 
     $version = (int) $pdo->query('PRAGMA user_version')->fetchColumn();
     if ($version < MALAVE_SCHEMA_VERSION) {
-        malave_db_migrate($pdo);
-        malave_db_seed($pdo);
-        $pdo->exec('PRAGMA user_version = ' . MALAVE_SCHEMA_VERSION);
+        $pdo->beginTransaction();
+        try {
+            malave_db_migrate($pdo);
+            malave_db_seed($pdo);
+            $pdo->exec('PRAGMA user_version = ' . MALAVE_SCHEMA_VERSION);
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
         @chmod($file, 0600);
     }
 
@@ -158,7 +167,10 @@ function malave_db_seed_albums(PDO $pdo): void
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
 
-    $pdo->beginTransaction();
+    $ownTx = !$pdo->inTransaction();
+    if ($ownTx) {
+        $pdo->beginTransaction();
+    }
     $albumSort = 0;
     foreach ($albumDefs as [$slug, $title, $description, $visible, $dirs, $files]) {
         $albumSort++;
@@ -183,7 +195,9 @@ function malave_db_seed_albums(PDO $pdo): void
             $insPhoto->execute([$albumId, $path, $path, '', $w, $h, '', '', $sort++, gmdate('c')]);
         }
     }
-    $pdo->commit();
+    if ($ownTx) {
+        $pdo->commit();
+    }
 }
 
 /** Seed the hero / about collages and the featured photo on first run. */

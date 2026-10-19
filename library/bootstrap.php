@@ -31,10 +31,10 @@ function h(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-function malave_config(): array
+function malave_config(bool $refresh = false): array
 {
     static $config = null;
-    if (is_array($config)) {
+    if (!$refresh && is_array($config)) {
         return $config;
     }
     if (!is_file(MALAVE_CONFIG_FILE)) {
@@ -57,14 +57,28 @@ function malave_write_config(array $values, bool $createOnly = false): void
         throw new RuntimeException('Cannot create the configuration directory.');
     }
     $php = "<?php\n\nreturn " . var_export($values, true) . ";\n";
-    $flags = LOCK_EX;
-    if ($createOnly && is_file(MALAVE_CONFIG_FILE)) {
-        throw new RuntimeException('Configuration already exists.');
+    if ($createOnly) {
+        $fp = @fopen(MALAVE_CONFIG_FILE, 'x');
+        if ($fp === false) {
+            throw new RuntimeException('Configuration already exists.');
+        }
+        try {
+            if (!flock($fp, LOCK_EX) || fwrite($fp, $php) !== strlen($php) || !fflush($fp)) {
+                throw new RuntimeException('Cannot write the configuration file.');
+            }
+            @chmod(MALAVE_CONFIG_FILE, 0600);
+            flock($fp, LOCK_UN);
+        } finally {
+            fclose($fp);
+        }
+        malave_config(true);
+        return;
     }
-    if (@file_put_contents(MALAVE_CONFIG_FILE, $php, $flags) === false) {
+    if (@file_put_contents(MALAVE_CONFIG_FILE, $php, LOCK_EX) === false) {
         throw new RuntimeException('Cannot write the configuration file.');
     }
     @chmod(MALAVE_CONFIG_FILE, 0600);
+    malave_config(true);
 }
 
 function malave_check_password(string $password): bool

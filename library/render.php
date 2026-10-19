@@ -13,10 +13,16 @@ if (!defined('MALAVE_APP')) {
 
 function malave_img_tag(array $photo, string $loading = 'lazy', string $alt = '', bool $thumb = false): string
 {
-    $path = ($thumb && !empty($photo['thumb'])) ? (string) $photo['thumb'] : (string) $photo['file'];
+    $file = (string) $photo['file'];
+    $path = ($thumb && !empty($photo['thumb'])) ? (string) $photo['thumb'] : $file;
     $src = h(malave_url($path));
     $width = (int) ($photo['width'] ?? 0);
     $height = (int) ($photo['height'] ?? 0);
+    if ($thumb && $path !== $file && $width > 0 && $height > 0 && max($width, $height) > MALAVE_THUMB_MAX_DIM) {
+        $scale = MALAVE_THUMB_MAX_DIM / max($width, $height);
+        $width = max(1, (int) round($width * $scale));
+        $height = max(1, (int) round($height * $scale));
+    }
     $dims = ($width > 0 && $height > 0) ? " width=\"{$width}\" height=\"{$height}\"" : '';
     return "<img src=\"{$src}\"{$dims} alt=\"" . h($alt) . "\" loading=\"{$loading}\" decoding=\"async\">";
 }
@@ -47,9 +53,9 @@ function malave_render_page(): string
         $aboutPhotos = array_slice($portfolio, 0, 4);
     }
     $featureId = (int) ($s['feature_photo'] ?? 0);
-    $featurePhoto = $featureId > 0 ? ($photosById[$featureId] ?? malave_photo($featureId)) : null;
-    if (!$featurePhoto) {
-        $featurePhoto = $portfolio[0] ?? null;
+    $featurePhoto = null;
+    if ($featureId > 0) {
+        $featurePhoto = $photosById[$featureId] ?? malave_photo($featureId) ?? ($portfolio[0] ?? null);
     }
 
     // Editable copy.

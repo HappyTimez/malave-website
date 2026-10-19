@@ -39,7 +39,8 @@ try {
             }
             $values['hero_photos'] = json_encode(array_slice(malave_int_list($_POST['hero_photos'] ?? []), 0, 5));
             $values['about_photos'] = json_encode(array_slice(malave_int_list($_POST['about_photos'] ?? []), 0, 4));
-            $values['feature_photo'] = (string) (malave_int_list([$_POST['feature_photo'] ?? 0])[0] ?? 0);
+            $featurePick = malave_int_list([$_POST['feature_photo'] ?? 0])[0] ?? 0;
+            $values['feature_photo'] = $featurePick > 0 ? (string) $featurePick : '';
             malave_settings_set($values);
             $return = 'index.php#text';
             malave_flash('Text and images saved.');
@@ -339,13 +340,93 @@ function malave_restore_backup(PDO $pdo, array $file): void
         throw new RuntimeException('That file is not a valid Malave backup.');
     }
 
-    $safePath = static function (string $p): string {
+    $safePath = static function (string $p, bool $mustExist = true): string {
         $p = ltrim($p, '/');
-        if ($p === '' || str_contains($p, '..') || !str_starts_with($p, 'images/')) {
+        if ($p === '' || str_contains($p, '..') || !preg_match('#^images/[A-Za-z0-9._/-]+\.(?:jpe?g|png|webp|gif)$#i', $p)) {
+            return '';
+        }
+        if ($mustExist && !is_file(MALAVE_ROOT . '/' . $p)) {
             return '';
         }
         return $p;
     };
+
+    // 1. Validate and normalize settings against the known allowlist.
+    $settings = malave_default_settings();
+    foreach ($data['settings'] as $k => $v) {
+        if (is_string($k) && array_key_exists($k, $settings) && (is_string($v) || is_numeric($v))) {
+            $settings[$k] = (string) $v;
+        }
+    }
+
+    // 2. Pre-validate all albums before touching the database.
+    $albums = [];
+    $usedSlugs = [];
+    foreach ($data['albums'] as $a) {
+        if (!is_array($a)) {
+            throw new RuntimeException('Backup contains a malformed album record.');
+        }
+        $id = (int) ($a['id'] ?? 0);
+        $title = trim((string) ($a['title'] ?? ''));
+        if ($id <= 0 || $title === '' || isset($albums[$id])) {
+            throw new RuntimeException('Backup contains an invalid or duplicate album ID.');
+        }
+        $baseSlug = malave_slugify((string) ($a['slug'] ?? '') ?: $title);
+        $slug = $baseSlug;
+        $n = 2;
+        while (isset($usedSlugs[$slug])) {
+            $slug = $baseSlug . '-' . $n++;
+        }
+        $usedSlugs[$slug] = true;
+        $albums[$id] = [
+            'id'             => $id,
+            'slug'           => $slug,
+            'title'          => $title,
+            'description'    => (string) ($a['description'] ?? ''),
+            'visible'        => ((int) ($a['visible'] ?? 1)) ? 1 : 0,
+            'sort'           => (int) ($a['sort'] ?? 0),
+            'cover_photo_id' => !empty($a['cover_photo_id']) ? (int) $a['cover_photo_id'] : null,
+        ];
+    }
+
+    // 3. Pre-validate all photos, foreign keys, and referenced image files.
+    $photos = [];
+    foreach ($data['photos'] as $p) {
+        if (!is_array($p)) {
+            throw new RuntimeException('Backup contains a malformed photo record.');
+        }
+        $id = (int) ($p['id'] ?? 0);
+        $albumId = (int) ($p['album_id'] ?? 0);
+        if ($id <= 0 || isset($photos[$id]) || !isset($albums[$albumId])) {
+            throw new RuntimeException('Backup contains a photo with an invalid ID or missing album reference.');
+        }
+        $filePath = $safePath((string) ($p['file'] ?? ''), true);
+        if ($filePath === '') {
+            throw new RuntimeException('Backup references an image file that is not present on the server.');
+        }
+        $thumbPath = $safePath((string) ($p['thumb'] ?? ''), true) ?: $filePath;
+        $origPath = $safePath((string) ($p['original'] ?? ''), false);
+        $photos[$id] = [
+            'id'         => $id,
+            'album_id'   => $albumId,
+            'file'       => $filePath,
+            'thumb'      => $thumbPath,
+            'original'   => $origPath,
+            'width'      => max(0, (int) ($p['width'] ?? 0)),
+            'height'     => max(0, (int) ($p['height'] ?? 0)),
+            'title'      => (string) ($p['title'] ?? ''),
+            'caption'    => (string) ($p['caption'] ?? ''),
+            'sort'       => (int) ($p['sort'] ?? 0),
+            'created_at' => (string) ($p['created_at'] ?? gmdate('c')),
+        ];
+    }
+
+    // Ensure album cover_photo_id only references a valid photo in the backup.
+    foreach ($albums as $aid => $a) {
+        if ($a['cover_photo_id'] !== null && !isset($photos[$a['cover_photo_id']])) {
+            $albums[$aid]['cover_photo_id'] = null;
+        }
+    }
 
     $pdo->beginTransaction();
     try {
@@ -354,32 +435,18 @@ function malave_restore_backup(PDO $pdo, array $file): void
         $pdo->exec('DELETE FROM settings');
 
         $insSetting = $pdo->prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
-        foreach ($data['settings'] as $k => $v) {
-            if (is_string($k) && (is_string($v) || is_numeric($v))) {
-                $insSetting->execute([$k, (string) $v]);
-            }
+        foreach ($settings as $k => $v) {
+            $insSetting->execute([$k, $v]);
         }
 
         $insAlbum = $pdo->prepare(
             'INSERT INTO albums (id, slug, title, description, visible, sort, cover_photo_id)
              VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
-        foreach ($data['albums'] as $a) {
-            if (!is_array($a) || empty($a['id']) || empty($a['title'])) {
-                continue;
-            }
-            $id = (int) $a['id'];
-            $title = trim((string) $a['title']);
-            $slug = trim((string) ($a['slug'] ?? '')) ?: malave_slugify($title);
-            $coverId = !empty($a['cover_photo_id']) ? (int) $a['cover_photo_id'] : null;
+        foreach ($albums as $a) {
             $insAlbum->execute([
-                $id,
-                $slug,
-                $title,
-                (string) ($a['description'] ?? ''),
-                ((int) ($a['visible'] ?? 1)) ? 1 : 0,
-                (int) ($a['sort'] ?? 0),
-                $coverId,
+                $a['id'], $a['slug'], $a['title'], $a['description'],
+                $a['visible'], $a['sort'], $a['cover_photo_id'],
             ]);
         }
 
@@ -387,36 +454,21 @@ function malave_restore_backup(PDO $pdo, array $file): void
             'INSERT INTO photos (id, album_id, file, thumb, original, width, height, title, caption, sort, created_at)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        foreach ($data['photos'] as $p) {
-            if (!is_array($p) || empty($p['id']) || empty($p['album_id'])) {
-                continue;
-            }
-            $filePath = $safePath((string) ($p['file'] ?? ''));
-            if ($filePath === '') {
-                continue;
-            }
-            $thumbPath = $safePath((string) ($p['thumb'] ?? '')) ?: $filePath;
-            $origPath = $safePath((string) ($p['original'] ?? ''));
+        foreach ($photos as $p) {
             $insPhoto->execute([
-                (int) $p['id'],
-                (int) $p['album_id'],
-                $filePath,
-                $thumbPath,
-                $origPath,
-                max(0, (int) ($p['width'] ?? 0)),
-                max(0, (int) ($p['height'] ?? 0)),
-                (string) ($p['title'] ?? ''),
-                (string) ($p['caption'] ?? ''),
-                (int) ($p['sort'] ?? 0),
-                (string) ($p['created_at'] ?? gmdate('c')),
+                $p['id'], $p['album_id'], $p['file'], $p['thumb'], $p['original'],
+                $p['width'], $p['height'], $p['title'], $p['caption'], $p['sort'], $p['created_at'],
             ]);
         }
 
-        malave_db_seed($pdo);
         $pdo->commit();
+        malave_settings(true);
     } catch (Throwable $e) {
-        $pdo->rollBack();
-        throw new RuntimeException('Could not restore backup: ' . $e->getMessage());
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        error_log('[malave] backup_restore: ' . $e->getMessage());
+        throw new RuntimeException('Could not restore the backup file.');
     }
 }
 
