@@ -421,9 +421,10 @@ function malave_restore_backup(PDO $pdo, array $file): void
         ];
     }
 
-    // Ensure album cover_photo_id only references a valid photo in the backup.
+    // Ensure album cover_photo_id references a photo in the same album.
     foreach ($albums as $aid => $a) {
-        if ($a['cover_photo_id'] !== null && !isset($photos[$a['cover_photo_id']])) {
+        $coverId = $a['cover_photo_id'];
+        if ($coverId !== null && (!isset($photos[$coverId]) || $photos[$coverId]['album_id'] !== $aid)) {
             $albums[$aid]['cover_photo_id'] = null;
         }
     }
